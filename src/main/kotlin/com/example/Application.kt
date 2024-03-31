@@ -1,24 +1,29 @@
 package com.example
 
-import com.example.database.configureDatabaseRouting
-import com.example.plugins.*
+import com.example.plugins.configureHTTP
+import com.example.plugins.configureRouting
+import com.example.plugins.configureSerialization
+import com.example.security.token.TokenConfig
+import configureJWTAuth
 import io.ktor.server.application.*
-import io.ktor.server.cio.*
-import io.ktor.server.engine.*
 import org.jetbrains.exposed.sql.Database
 
-fun main() {
+fun main(args: Array<String>) {
     Database.connect("jdbc:postgresql://localhost:5432/online-shop", driver = "org.postgresql.Driver",
         user = "postgres", password = "monvex_")
-    embeddedServer(CIO, port = 8080, host = "0.0.0.0", module = Application::module)
-        .start(wait = true)
+    io.ktor.server.netty.EngineMain.main(args)
 }
 
 fun Application.module() {
+    val config = TokenConfig(
+        audience = environment.config.property("jwt.audience").getString(),
+        issuer = environment.config.property("jwt.issuer").getString(),
+        expiresIn = 365L * 1000L * 60L * 60L * 24L,
+        secret = System.getenv("JWT_SECRET")
+    )
 //    configureSockets()
     configureSerialization()
-    configureDatabaseRouting()
-//    configureDatabases()
-//    configureHTTP()
-//    configureRouting()
+    configureHTTP()
+    configureJWTAuth(config)
+    configureRouting(config)
 }

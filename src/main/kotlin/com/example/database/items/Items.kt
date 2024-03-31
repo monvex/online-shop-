@@ -1,6 +1,7 @@
 package com.example.database.items
 import com.example.database.brands.Brands
 import com.example.database.categories.Categories
+import com.example.routing.ItemReceiveRemote
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -10,6 +11,7 @@ object Items: Table() {
     private val itemTitle = Items.varchar("title", 30)
     private val brand = Items.varchar("brand", 25).uniqueIndex().references(Brands.brandTitle)
     private val category = Items.varchar("category", 25).uniqueIndex().references(Categories.categoryTitle)
+    private val price = Items.double("price")
 
 
     fun insert(item: ItemReceiveRemote) {
@@ -18,6 +20,7 @@ object Items: Table() {
                 it[itemTitle] = item.itemTitle
                 it[brand] = item.brand
                 it[category] = item.category
+                it[price] = item.price
             }
         }
     }
@@ -34,6 +37,7 @@ object Items: Table() {
                 it[itemTitle] = newItemDTO.itemTitle
                 it[brand] = newItemDTO.brand
                 it[category] = newItemDTO.category
+                it[price] = newItemDTO.price
             }
         }
     }
@@ -72,10 +76,25 @@ object Items: Table() {
                 itemTitle = it[itemTitle],
                 brand = it[brand],
                 category = it[category],
-                id = it[id]
+                id = it[id],
+                price = it[price]
             ))
         }
         return itemsDTO
+    }
+
+    fun fetchItem(id: Int): ItemDTO {
+        return transaction {
+            val result = Items.selectAll().where(Items.id.eq(id)).single()
+            ItemDTO(
+                id = result[Items.id],
+                itemTitle = result[itemTitle],
+                brand = result[brand],
+                category = result[category],
+                price = result[price]
+            )
+        }
+
     }
 }
 

@@ -1,7 +1,7 @@
 package com.example.database
 
-import com.example.database.images.configureImagesRouting
-import com.example.database.items.configureItemsRouting
+import com.example.routing.configureImagesRouting
+import com.example.routing.configureItemsRouting
 import io.ktor.server.application.*
 
 

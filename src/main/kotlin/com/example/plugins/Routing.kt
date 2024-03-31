@@ -1,13 +1,17 @@
 package com.example.plugins
 
+import com.example.database.configureDatabaseRouting
+import com.example.routing.configureAuthRouting
+import com.example.routing.configurePurchaseItemsRouting
+import com.example.security.hashing.SHA256HashingService
+import com.example.security.token.JWTTokenService
+import com.example.security.token.TokenConfig
 import io.ktor.server.application.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
 
-fun Application.configureRouting() {
-    routing {
-        get("/") {
-            call.respondText("Hello World!")
-        }
-    }
+fun Application.configureRouting(config: TokenConfig) {
+    val tokenService = JWTTokenService()
+    val hashingService = SHA256HashingService()
+    configureDatabaseRouting()
+    configureAuthRouting(hashingService, tokenService, config)
+    configurePurchaseItemsRouting()
 }

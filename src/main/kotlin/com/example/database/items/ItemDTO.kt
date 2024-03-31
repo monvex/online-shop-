@@ -7,5 +7,6 @@ class ItemDTO(
     val id: Int,
     val itemTitle: String,
     val brand: String,
-    val category: String
+    val category: String,
+    val price: Double
 )

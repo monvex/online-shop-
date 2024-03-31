@@ -1,8 +1,11 @@
 
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 val ktor_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
 val exposed_version: String by project
+val swagger_codegen_version = "1.0.36"
 plugins {
     kotlin("jvm") version "1.9.22"
     id("io.ktor.plugin") version "2.3.8"
@@ -22,6 +25,11 @@ application {
 repositories {
     mavenCentral()
 }
+tasks.withType<KotlinCompile>().all {
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+}
 
 dependencies {
     implementation("io.ktor:ktor-server-core-jvm")
@@ -29,9 +37,17 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
     implementation("io.ktor:ktor-server-content-negotiation-jvm")
 
+    implementation("io.ktor:ktor-server-auth:$ktor_version")
+    implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
+    implementation("io.ktor:ktor-server-netty:$ktor_version")
+
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
+
+    implementation("io.ktor:ktor-server-openapi:$ktor_version")
+
+    implementation("io.swagger.codegen.v3:swagger-codegen-generators:$swagger_codegen_version")
 
     implementation("org.postgresql:postgresql:42.7.0")
     implementation("io.ktor:ktor-server-swagger-jvm")

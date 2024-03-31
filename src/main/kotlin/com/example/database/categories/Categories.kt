@@ -1,9 +1,7 @@
 package com.example.database.categories
 
-import com.example.database.items.Items
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object Categories: Table() {
@@ -33,9 +31,12 @@ object Categories: Table() {
     fun checkExistence(title: String): Boolean {
         return try {
             transaction {
-                Items.selectAll().where(categoryTitle.eq(title)).single()
+                Categories.selectAll().where(categoryTitle.eq(title)).single()
                 true
             }
+//            SELECT items.id, items.title, items.brand, items.category FROM items WHERE categories.title = 'coats'
+//            SELECT items.id, items.title, items.brand, items.category FROM items WHERE items.category = 'coats'
+//            CASCADE DELete
         } catch (e: Exception) {
             false
         }
